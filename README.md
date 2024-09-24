@@ -16,7 +16,7 @@ Este proyecto es una aplicación web para la gestión de datos relacionados con 
 3. **Iniciar la aplicación**:
    - Para iniciar el servidor, ejecuta el siguiente comando:
      ```
-     npm run
+     npm run start
      ```
 
 Para entrar hay que ir al navegador y colocar http://localhost:6505/
