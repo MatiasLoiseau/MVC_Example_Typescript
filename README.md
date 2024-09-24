@@ -2,6 +2,25 @@
 
 Este proyecto es una aplicación web para la gestión de datos relacionados con universidades, como estudiantes, cursos y profesores. Está construido utilizando Node.js y Express, con TypeScript como lenguaje principal. La estructura del proyecto sigue la arquitectura típica Modelo-Vista-Controlador (MVC), con directorios separados para controladores, modelos, rutas y vistas.
 
+### Instalación:
+
+1. **Instalar XAMPP**:
+   - Descarga e instala [XAMPP](https://www.apachefriends.org/es/index.html) para configurar tu entorno local con Apache y MySQL.
+
+2. **Instalar las dependencias**:
+   - Ejecuta el siguiente comando para instalar las dependencias del proyecto:
+     ```
+     npm install
+     ```
+
+3. **Iniciar la aplicación**:
+   - Para iniciar el servidor, ejecuta el siguiente comando:
+     ```
+     npm run
+     ```
+
+Para entrar hay que ir al navegador y colocar http://localhost:6505/
+
 ### Componentes clave:
 
 1. **Controladores**:
