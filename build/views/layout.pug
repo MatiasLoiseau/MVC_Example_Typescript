@@ -5,18 +5,40 @@ html(lang="es")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Proyecto Universidad | #{pagina}
         link(rel="stylesheet", href="/css/app.css")
-    body.min-h-screen.bg-gray-50 
-        nav.bg-white.shadow
+        link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css") 
+    body.min-h-screen.bg-gray-50.font-sans
+        nav.bg-white.shadow-lg
             .container.mx-auto.px-4
                 .flex.justify-between.items-center.h-16
-                    a.text-xl.font-bold.text-gray-800(href="/") Proyecto Universidad
-                    ul.flex.space-x-4
+                    a.text-2xl.font-extrabold.text-indigo-600(href="/") 
+                        i.fas.fa-graduation-cap.mr-2
+                        | Proyecto Universidad
+                    ul.flex.space-x-10
                         li
-                            a(href="/estudiantes/listarEstudiantes" class="text-gray-600 hover:text-indigo-600 font-bold") Listar Estudiantes
+                            a(href="/estudiantes/listarEstudiantes" class="text-gray-600 hover:text-indigo-600 font-semibold transition duration-300 ease-in-out") 
+                                i.fas.fa-user-graduate.mr-1
+                                | Estudiantes
                         li
-                            a(href="/profesores/listarProfesores" class="text-gray-600 hover:text-indigo-600 font-bold") Listar Profesores
+                            a(href="/profesores/listarProfesores" class="text-gray-600 hover:text-indigo-600 font-semibold transition duration-300 ease-in-out") 
+                                i.fas.fa-chalkboard-teacher.mr-1
+                                | Profesores
                         li
-                            a(href="/cursos/listarCursos" class="text-gray-600 hover:text-indigo-600") Listar Cursos
-        main(class="mx-auto container mt-10 px-2")
+                            a(href="/cursos/listarCursos" class="text-gray-600 hover:text-indigo-600 font-semibold transition duration-300 ease-in-out") 
+                                i.fas.fa-book-open.mr-1
+                                | Cursos
+        main(class="container mx-auto mt-10 px-6 py-4 bg-white shadow-md rounded-lg")
             block contenido
-            block scripts
+        footer.bg-indigo-600.text-white.py-6.mt-10
+            .container.mx-auto.text-center
+                p.font-light &copy; 2024 Proyecto Universidad. Todos los derechos reservados.
+            ul.flex.justify-center.space-x-4.mt-4
+                li
+                    a(href="https://twitter.com" class="hover:text-gray-300 transition ease-in-out")
+                        i.fab.fa-twitter.text-lg
+                li
+                    a(href="https://facebook.com" class="hover:text-gray-300 transition ease-in-out")
+                        i.fab.fa-facebook-f.text-lg
+                li
+                    a(href="https://instagram.com" class="hover:text-gray-300 transition ease-in-out")
+                        i.fab.fa-instagram.text-lg
+        block scripts

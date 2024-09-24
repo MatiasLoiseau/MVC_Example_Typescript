@@ -1,34 +1,34 @@
 extends ./layout
 
 block contenido
-    .flex.justify-end.mb-4
-        ul.flex.space-x-4
-            li
-                a(href="/estudiantes/crearEstudiantes" class="text-green-600 hover:text-green-800") Agregar Estudiante
-    
-    .py-10
-        h1.text-4xl.my-10.font-extrabold.text-center Proyecto
-            span.font-normal Universidad
-        h2.text-center.text-2xl.font-extrabold= pagina
-      
-        table.table-auto.w-full.mt-4
-            thead
-                tr
-                    th.text-left.text-gray-500.uppercase.px-6.py-3 Dni
-                    th.text-left.text-gray-500.uppercase.px-6.py-3 Nombre
-                    th.text-left.text-gray-500.uppercase.px-6.py-3 Apellido
-                    th.text-left.text-gray-500.uppercase.px-6.py-3 Email
-                    th.text-left.text-gray-500.uppercase.px-6.py-3 Acciones
-            tbody
-                each estudiante in estudiantes
+    .container.mx-auto.px-4
+        .flex.justify-end.mb-4
+            a.bg-green-600.text-black.font-bold.py-2.px-4.rounded.transition(class="hover:bg-green-700", href="/estudiantes/crearEstudiantes") Agregar Estudiante
+
+        .py-10
+            h1.text-5xl.my-10.font-extrabold.text-center.text-gray-800
+                | Proyecto
+                span.font-normal.text-gray-600 Universidad
+            h2.text-center.text-2xl.font-extrabold.text-gray-700.mt-4= pagina
+
+            table.table-auto.w-full.mt-8.border-collapse.shadow-lg
+                thead.bg-gray-200
                     tr
-                        td.px-6.py-4= estudiante.dni
-                        td.px-6.py-4= estudiante.nombre
-                        td.px-6.py-4= estudiante.apellido
-                        td.px-6.py-4= estudiante.email
-                        td.px-6.py-4
-                            a.text-blue-500(href=`/estudiantes/modificarEstudiante/${estudiante.id}`) Editar
-                            a.text-red-500.ml-2(href="#", onclick=`eliminarEstudiante('${estudiante.id}')`) Eliminar
+                        th.border-b.border-gray-300.text-left.text-gray-600.uppercase.px-6.py-3 Dni
+                        th.border-b.border-gray-300.text-left.text-gray-600.uppercase.px-6.py-3 Nombre
+                        th.border-b.border-gray-300.text-left.text-gray-600.uppercase.px-6.py-3 Apellido
+                        th.border-b.border-gray-300.text-left.text-gray-600.uppercase.px-6.py-3 Email
+                        th.border-b.border-gray-300.text-left.text-gray-600.uppercase.px-6.py-3 Acciones
+                tbody
+                    each estudiante in estudiantes
+                        tr(class="hover:bg-gray-100 transition")
+                            td.border-b.border-gray-300.px-6.py-4.text-gray-700= estudiante.dni
+                            td.border-b.border-gray-300.px-6.py-4.text-gray-700= estudiante.nombre
+                            td.border-b.border-gray-300.px-6.py-4.text-gray-700= estudiante.apellido
+                            td.border-b.border-gray-300.px-6.py-4.text-gray-700= estudiante.email
+                            td.border-b.border-gray-300.px-6.py-4
+                                a.bg-blue-500.text-white.font-bold.py-1.px-3.rounded.transition(href=`/estudiantes/modificarEstudiante/${estudiante.id}`, class="hover:bg-blue-700") Editar
+                                a.bg-red-500.text-white.font-bold.py-1.px-3.rounded.transition.ml-2(href="#", onclick=`eliminarEstudiante('${estudiante.id}')`, class="hover:bg-red-700") Eliminar
 
 block scripts
     script.
