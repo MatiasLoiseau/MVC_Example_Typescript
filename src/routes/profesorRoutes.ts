@@ -1,14 +1,42 @@
 import express from 'express';
-const router=express.Router();
-import  { consultarTodos, consultarUno, eliminar, insertar, modificar } 
-from '../controllers/profesoresController';
+import { insertar, modificar, eliminar, validar, consultarUno, consultarTodos } from '../controllers/profesoresController';
 
-router.get('/',consultarTodos);
-router.post('/',insertar);
+const router = express.Router();
 
-router.route('/:id')
-    .get(consultarUno)
-    .put(modificar)
-    .delete(eliminar);
+// Listar todos los profesores
+router.get('/listarProfesores', consultarTodos);
+
+// Mostrar formulario para crear profesor
+router.get('/crearProfesores', (req, res) => {
+    res.render('crearProfesores', {
+        pagina: 'Crear Profesor',
+    });
+});
+
+// Insertar un nuevo profesor con validaciones
+router.post('/', validar(), insertar);
+
+// Mostrar formulario para modificar profesor
+router.get('/modificarProfesor/:id', async (req, res) => {
+    try {
+        const profesor = await consultarUno(req, res); 
+        if (!profesor) {
+            return res.status(404).send('Profesor no encontrado');
+        }
+        res.render('modificarProfesor', {
+            profesor, 
+        });
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            res.status(500).send(err.message);
+        }
+    }
+});
+
+// Modificar un profesor
+router.put('/:id', modificar);
+
+// Eliminar un profesor
+router.delete('/:id', eliminar);
 
 export default router;
