@@ -1,0 +1,52 @@
+extends ./layout
+
+block contenido
+    .container.mx-auto.px-4
+        .flex.justify-end.mb-4
+            a.bg-green-600.text-black.font-bold.py-2.px-4.rounded.transition(class="hover:bg-green-700", href="/cursos/crearCursos") Agregar Curso
+
+        .py-10
+            h1.text-5xl.my-10.font-extrabold.text-center.text-gray-800
+                | Proyecto
+                span.font-normal.text-gray-600 Universidad
+            h2.text-center.text-2xl.font-extrabold.text-gray-700.mt-4= pagina
+
+            table.table-auto.w-full.mt-8.border-collapse.shadow-lg
+                thead.bg-gray-200
+                    tr
+                        th.border-b.border-gray-300.text-left.text-gray-600.uppercase.px-6.py-3 Nombre
+                        th.border-b.border-gray-300.text-left.text-gray-600.uppercase.px-6.py-3 Descripción
+                        th.border-b.border-gray-300.text-left.text-gray-600.uppercase.px-6.py-3 Profesor
+                        th.border-b.border-gray-300.text-left.text-gray-600.uppercase.px-6.py-3 Acciones
+                tbody
+                    each curso in cursos
+                        tr(class="hover:bg-gray-100 transition")
+                            td.border-b.border-gray-300.px-6.py-4.text-gray-700= curso.nombre
+                            td.border-b.border-gray-300.px-6.py-4.text-gray-700= curso.descripcion
+                            td.border-b.border-gray-300.px-6.py-4.text-gray-700= curso.profesor ? curso.profesor.nombre + ' ' + curso.profesor.apellido : 'Sin profesor'
+                            td.border-b.border-gray-300.px-6.py-4
+                                a.bg-blue-500.text-white.font-bold.py-1.px-3.rounded.transition(href=`/cursos/modificarCurso/${curso.id}`, class="hover:bg-blue-700") Editar
+                                a.bg-red-500.text-white.font-bold.py-1.px-3.rounded.transition.ml-2(href="#", onclick=`eliminarCurso('${curso.id}')`, class="hover:bg-red-700") Eliminar
+
+block scripts
+    script.
+        function eliminarCurso(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
+                fetch(`/cursos/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.mensaje === 'Curso eliminado') {
+                        alert('Curso eliminado con éxito.');
+                        window.location.reload(); 
+                    } else {
+                        alert(data.mensaje); 
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar el curso.');
+                });
+            }
+        }

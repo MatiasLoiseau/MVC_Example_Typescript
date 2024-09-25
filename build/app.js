@@ -9,6 +9,7 @@ const morgan_1 = __importDefault(require("morgan"));
 const path_1 = __importDefault(require("path"));
 const estudianteRouter_1 = __importDefault(require("./routes/estudianteRouter"));
 const profesorRouter_1 = __importDefault(require("./routes/profesorRoutes"));
+const cursoRouter_1 = __importDefault(require("./routes/cursosRouter"));
 const method_override_1 = __importDefault(require("method-override"));
 const app = (0, express_1.default)();
 //habilitamos pug
@@ -28,4 +29,5 @@ app.get('/', (req, res) => {
 });
 app.use('/estudiantes', estudianteRouter_1.default);
 app.use('/profesores', profesorRouter_1.default);
+app.use('/cursos', cursoRouter_1.default);
 exports.default = app;

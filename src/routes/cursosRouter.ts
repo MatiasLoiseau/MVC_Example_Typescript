@@ -1,14 +1,36 @@
 import express from 'express';
-const router=express.Router();
-import  { consultarTodos, consultarUno, eliminar, insertar, modificar } 
-from '../controllers/cursoController';
+import { insertar, modificar, eliminar, validar, consultarUno, consultarTodos } from '../controllers/cursoController';
 
-router.get('/',consultarTodos);
-router.post('/',insertar);
+const router = express.Router();
 
-router.route('/:id')
-    .get(consultarUno)
-    .put(modificar)
-    .delete(eliminar);
+router.get('/listarCursos', consultarTodos);
+
+router.get('/crearCursos', (req, res) => {
+    res.render('crearCursos', {
+        pagina: 'Crear Curso',
+    });
+});
+
+router.post('/', validar(), insertar);
+
+router.get('/modificarCurso/:id', async (req, res) => {
+    try {
+        const curso = await consultarUno(req, res);
+        if (!curso) {
+            return res.status(404).send('Curso no encontrado');
+        }
+        res.render('modificarCurso', {
+            curso,
+        });
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            res.status(500).send(err.message);
+        }
+    }
+});
+
+router.put('/:id', modificar);
+
+router.delete('/:id', eliminar);
 
 export default router;

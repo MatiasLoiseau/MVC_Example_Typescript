@@ -4,7 +4,8 @@ import morgan from "morgan";
 import path from "path";
 
 import estudianteRouter from './routes/estudianteRouter';
-import profesorRouter from './routes/profesorRoutes'; // Importa el router de profesores
+import profesorRouter from './routes/profesorRoutes'; 
+import cursoRouter from './routes/cursosRouter';
 
 import methodOverride from 'method-override';
 
@@ -34,6 +35,9 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/estudiantes', estudianteRouter);
 
 // Rutas de profesores
-app.use('/profesores', profesorRouter); // Añadido el router de profesores
+app.use('/profesores', profesorRouter);
+
+// Rutas de cursos
+app.use('/cursos', cursoRouter);
 
 export default app;

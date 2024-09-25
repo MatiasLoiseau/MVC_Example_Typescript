@@ -1,51 +1,162 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { check, validationResult } from 'express-validator';
+import { Curso } from '../models/CursoModel';
+import { AppDataSource } from '../db/conexion';
+import { Profesor } from '../models/ProfesorModel';
+import { Estudiante } from '../models/EstudianteModel';
+import { CursoEstudiante } from '../models/CursoEstudianteModel';
 
+export const validar = () => [
+    check('nombre').notEmpty().withMessage('El nombre es obligatorio')
+        .isLength({ min: 3 }).withMessage('El Nombre debe tener al menos 3 caracteres'),
+    check('descripcion').notEmpty().withMessage('La descripción es obligatoria'),
+    check('profesor_id').notEmpty().withMessage('El profesor es obligatorio'),
+    (req: Request, res: Response, next: NextFunction) => {
+        const errores = validationResult(req);
+        if (!errores.isEmpty()) {
+            return res.render('creaCursos', {
+                pagina: 'Crear Curso',
+                errores: errores.array()
+            });
+        }
+        next();
+    }
+];
 
-  export const consultarTodos= async (req:Request, res:Response) =>{
-        try {
-          res.json('Consulta prof');
-        } catch (err: unknown) {
-            if (err instanceof Error){
-                res.status(500).send(err.message);
-            }
+export const consultarTodos = async (req: Request, res: Response) => {
+    try {
+        const cursoRepository = AppDataSource.getRepository(Curso);
+        const cursos = await cursoRepository.find({ relations: ['profesor', 'estudiantes'] });
+        res.render('listarCursos', {
+            pagina: 'Lista de Cursos',
+            cursos
+        });
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            res.status(500).send(err.message);
         }
     }
+};
 
-    export const consultarUno= async (req:Request, res:Response) =>{
-        try {
-          res.json('Consulta un prof');
-        } catch (err: unknown) {
-            if (err instanceof Error){
-                res.status(500).send(err.message);
-            }
-        }
+export const consultarUno = async (req: Request, res: Response): Promise<Curso | null> => {
+    const { id } = req.params;
+    const idNumber = Number(id);
+    if (isNaN(idNumber)) {
+        throw new Error('ID inválido, debe ser un número');
     }
+    try {
+        const cursoRepository = AppDataSource.getRepository(Curso);
+        const curso = await cursoRepository.findOne({ where: { id: idNumber }, relations: ['profesor', 'estudiantes'] });
 
-    export const insertar= async (req:Request, res:Response) =>{
-        try {
-          res.json('inserta prof');
-        } catch (err: unknown) {
-            if (err instanceof Error){
-                res.status(500).send(err.message);
-            }
+        if (curso) {
+            return curso;
+        } else {
+            return null;
+        }
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            throw err;
+        } else {
+            throw new Error('Error desconocido');
         }
     }
+};
 
-    export const modificar= async (req:Request, res:Response) =>{
-        try {
-          res.json('modifica prof');
-        } catch (err: unknown) {
-            if (err instanceof Error){
-                res.status(500).send(err.message);
+export const insertar = async (req: Request, res: Response): Promise<void> => {
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        return res.render('cargaCursos', {
+            pagina: 'Crear Curso',
+            errores: errores.array()
+        });
+    }
+    const { nombre, descripcion, profesor_id } = req.body;
+
+    try {
+        await AppDataSource.transaction(async (transactionalEntityManager) => {
+            const cursoRepository = transactionalEntityManager.getRepository(Curso);
+            const profesorRepository = transactionalEntityManager.getRepository(Profesor);
+
+            const existeCurso = await cursoRepository.findOne({
+                where: { nombre }
+            });
+
+            if (existeCurso) {
+                throw new Error('El curso ya existe.');
             }
+
+            const profesor = await profesorRepository.findOne({ where: { id: Number(profesor_id) } });
+
+            if (!profesor) {
+                throw new Error('Profesor no encontrado.');
+            }
+
+            const nuevoCurso = cursoRepository.create({ nombre, descripcion, profesor });
+            await cursoRepository.save(nuevoCurso);
+        });
+        const cursos = await AppDataSource.getRepository(Curso).find({ relations: ['profesor'] });
+        res.render('listarCursos', {
+            pagina: 'Lista de Cursos',
+            cursos
+        });
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            res.status(500).send(err.message);
         }
     }
-    export const eliminar= async (req:Request, res:Response) =>{
-        try {
-          res.json('elimina prof');
-        } catch (err: unknown) {
-            if (err instanceof Error){
-                res.status(500).send(err.message);
+};
+
+export const modificar = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { nombre, descripcion, profesor_id } = req.body;
+    try {
+        const cursoRepository = AppDataSource.getRepository(Curso);
+        const profesorRepository = AppDataSource.getRepository(Profesor);
+        const curso = await cursoRepository.findOne({ where: { id: parseInt(id) }, relations: ['profesor'] });
+
+        if (!curso) {
+            return res.status(404).send('Curso no encontrado');
+        }
+        const profesor = await profesorRepository.findOne({ where: { id: Number(profesor_id) } });
+        if (!profesor) {
+            return res.status(404).send('Profesor no encontrado');
+        }
+        cursoRepository.merge(curso, { nombre, descripcion, profesor });
+        await cursoRepository.save(curso);
+        return res.redirect('/cursos/listarCursos');
+    } catch (error) {
+        console.error('Error al modificar el curso:', error);
+        return res.status(500).send('Error del servidor');
+    }
+};
+
+export const eliminar = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    try {
+        await AppDataSource.transaction(async transactionalEntityManager => {
+            const cursoRepository = transactionalEntityManager.getRepository(Curso);
+            const curso = await cursoRepository.findOne({ where: { id: Number(id) }, relations: ['estudiantes'] });
+            if (!curso) {
+                throw new Error('Curso no encontrado');
             }
+
+            if (curso.estudiantes && curso.estudiantes.length > 0) {
+                throw new Error('Curso tiene estudiantes inscritos, no se puede eliminar');
+            }
+
+            const deleteResult = await cursoRepository.delete(id);
+
+            if (deleteResult.affected === 1) {
+                return res.json({ mensaje: 'Curso eliminado' });
+            } else {
+                throw new Error('Curso no encontrado');
+            }
+        });
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            res.status(400).json({ mensaje: err.message });
+        } else {
+            res.status(400).json({ mensaje: 'Error' });
         }
     }
+};
