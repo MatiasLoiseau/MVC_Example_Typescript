@@ -52,7 +52,12 @@ __decorate([
     __metadata("design:type", Date)
 ], Profesor.prototype, "updateAt", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => CursoModel_1.Curso, (curso) => curso.profesor),
+    (0, typeorm_1.ManyToMany)(() => CursoModel_1.Curso),
+    (0, typeorm_1.JoinTable)({
+        name: 'cursos_profesores',
+        joinColumn: { name: 'profesor_id', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'curso_id', referencedColumnName: 'id' }
+    }),
     __metadata("design:type", Array)
 ], Profesor.prototype, "cursos", void 0);
 exports.Profesor = Profesor = __decorate([

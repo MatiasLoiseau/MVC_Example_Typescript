@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,21 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const profesoresController_1 = require("../controllers/profesoresController");
 const router = express_1.default.Router();
-
 // Listar todos los profesores
 router.get('/listarProfesores', profesoresController_1.consultarTodos);
-
-// Mostrar formulario para crear un profesor
+// Mostrar formulario para crear profesor
 router.get('/crearProfesores', (req, res) => {
     res.render('crearProfesores', {
         pagina: 'Crear Profesor',
     });
 });
-
-// Insertar un nuevo profesor
+// Insertar un nuevo profesor con validaciones
 router.post('/', (0, profesoresController_1.validar)(), profesoresController_1.insertar);
-
-// Mostrar formulario para modificar un profesor
+// Mostrar formulario para modificar profesor
 router.get('/modificarProfesor/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const profesor = yield (0, profesoresController_1.consultarUno)(req, res);
@@ -47,11 +42,8 @@ router.get('/modificarProfesor/:id', (req, res) => __awaiter(void 0, void 0, voi
         }
     }
 }));
-
 // Modificar un profesor
 router.put('/:id', profesoresController_1.modificar);
-
 // Eliminar un profesor
 router.delete('/:id', profesoresController_1.eliminar);
-
 exports.default = router;

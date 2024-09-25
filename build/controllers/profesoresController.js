@@ -14,8 +14,6 @@ const express_validator_1 = require("express-validator");
 const ProfesorModel_1 = require("../models/ProfesorModel");
 const conexion_1 = require("../db/conexion");
 var profesores;
-
-// Validación de los campos de entrada
 const validar = () => [
     (0, express_validator_1.check)('dni')
         .notEmpty().withMessage('El DNI es obligatorio')
@@ -25,12 +23,10 @@ const validar = () => [
     (0, express_validator_1.check)('apellido').notEmpty().withMessage('El apellido es obligatorio')
         .isLength({ min: 3 }).withMessage('El Apellido debe tener al menos 3 caracteres'),
     (0, express_validator_1.check)('email').isEmail().withMessage('Debe proporcionar un email válido'),
-    (0, express_validator_1.check)('profesion').notEmpty().withMessage('La profesión es obligatoria'),
-    (0, express_validator_1.check)('telefono').notEmpty().withMessage('El teléfono es obligatorio'),
     (req, res, next) => {
         const errores = (0, express_validator_1.validationResult)(req);
         if (!errores.isEmpty()) {
-            return res.render('crearProfesores', {
+            return res.render('creaProfesores', {
                 pagina: 'Crear Profesor',
                 errores: errores.array()
             });
@@ -39,8 +35,6 @@ const validar = () => [
     }
 ];
 exports.validar = validar;
-
-// Consultar todos los profesores
 const consultarTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const profesorRepository = conexion_1.AppDataSource.getRepository(ProfesorModel_1.Profesor);
@@ -57,8 +51,6 @@ const consultarTodos = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.consultarTodos = consultarTodos;
-
-// Consultar un profesor
 const consultarUno = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const idNumber = Number(id);
@@ -70,30 +62,30 @@ const consultarUno = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const profesor = yield profesorRepository.findOne({ where: { id: idNumber } });
         if (profesor) {
             return profesor;
-        } else {
+        }
+        else {
             return null;
         }
     }
     catch (err) {
         if (err instanceof Error) {
             throw err;
-        } else {
+        }
+        else {
             throw new Error('Error desconocido');
         }
     }
 });
 exports.consultarUno = consultarUno;
-
-// Insertar un profesor
 const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errores = (0, express_validator_1.validationResult)(req);
     if (!errores.isEmpty()) {
-        return res.render('crearProfesores', {
+        return res.render('cargaProfesores', {
             pagina: 'Crear Profesor',
             errores: errores.array()
         });
     }
-    const { dni, nombre, apellido, email, profesion, telefono } = req.body;
+    const { dni, nombre, apellido, email } = req.body;
     try {
         yield conexion_1.AppDataSource.transaction((transactionalEntityManager) => __awaiter(void 0, void 0, void 0, function* () {
             const profesorRepository = transactionalEntityManager.getRepository(ProfesorModel_1.Profesor);
@@ -106,7 +98,7 @@ const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             if (existeProfesor) {
                 throw new Error('El profesor ya existe.');
             }
-            const nuevoProfesor = profesorRepository.create({ dni, nombre, apellido, email, profesion, telefono });
+            const nuevoProfesor = profesorRepository.create({ dni, nombre, apellido, email });
             yield profesorRepository.save(nuevoProfesor);
         }));
         const profesores = yield conexion_1.AppDataSource.getRepository(ProfesorModel_1.Profesor).find();
@@ -122,18 +114,16 @@ const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.insertar = insertar;
-
-// Modificar un profesor
 const modificar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { dni, nombre, apellido, email, profesion, telefono } = req.body;
+    const { dni, nombre, apellido, email } = req.body;
     try {
         const profesorRepository = conexion_1.AppDataSource.getRepository(ProfesorModel_1.Profesor);
         const profesor = yield profesorRepository.findOne({ where: { id: parseInt(id) } });
         if (!profesor) {
             return res.status(404).send('Profesor no encontrado');
         }
-        profesorRepository.merge(profesor, { dni, nombre, apellido, email, profesion, telefono });
+        profesorRepository.merge(profesor, { dni, nombre, apellido, email });
         yield profesorRepository.save(profesor);
         return res.redirect('/profesores/listarProfesores');
     }
@@ -143,8 +133,6 @@ const modificar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.modificar = modificar;
-
-// Eliminar un profesor
 const eliminar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
@@ -153,7 +141,8 @@ const eliminar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const deleteResult = yield profesorRepository.delete(id);
             if (deleteResult.affected === 1) {
                 return res.json({ mensaje: 'Profesor eliminado' });
-            } else {
+            }
+            else {
                 throw new Error('Profesor no encontrado');
             }
         }));
@@ -161,7 +150,8 @@ const eliminar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     catch (err) {
         if (err instanceof Error) {
             res.status(400).json({ mensaje: err.message });
-        } else {
+        }
+        else {
             res.status(400).json({ mensaje: 'Error' });
         }
     }
