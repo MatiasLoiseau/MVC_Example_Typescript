@@ -1,0 +1,39 @@
+extends ./layout
+
+block contenido
+    .container.mx-auto.px-4
+        .flex.justify-end.mb-4
+            a.bg-blue-600.text-white.font-bold.py-2.px-4.rounded.transition(class="hover:bg-blue-700", href="/cursoEstudiante/listarInscripciones") Ver Inscripciones
+
+        .py-10
+            h1.text-5xl.my-10.font-extrabold.text-center.text-gray-800
+                | Proyecto
+                span.font-normal.text-gray-600 Universidad
+            h2.text-center.text-2xl.font-extrabold.text-gray-700.mt-4= pagina
+
+            if errores
+                ul
+                    each error in errores
+                        li.text-red-500= error.msg
+
+            form.mt-8(method="POST", action="/cursoEstudiante/inscribirEstudiante")
+                .mb-4
+                    label.block.text-gray-700.text-sm.font-bold.mb-2(for="estudiante_id") Estudiante
+                    select#estudiante_id.block.appearance-none.w-full.bg-white.border.border-gray-400.hover (name="estudiante_id")
+                        option(value="") Selecciona un estudiante
+                        each estudiante in estudiantes
+                            option(value=estudiante.id)= estudiante.nombre + ' ' + estudiante.apellido
+                .mb-4
+                    label.block.text-gray-700.text-sm.font-bold.mb-2(for="curso_id") Curso
+                    select#curso_id.block.appearance-none.w-full.bg-white.border.border-gray-400.hover (name="curso_id")
+                        option(value="") Selecciona un curso
+                        each curso in cursos
+                            option(value=curso.id)= curso.nombre
+                .mb-4
+                    label.block.text-gray-700.text-sm.font-bold.mb-2(for="nota") Nota (Opcional)
+                    input#nota.block.w-full.bg-white.border.border-gray-400.hover(type="number", name="nota", min="0", max="100", step="0.01")
+                .flex.items-center.justify-between
+                    button.bg-green-500.hover(type="submit") Inscribir Estudiante
+
+block scripts
+    // Aquí puedes agregar scripts adicionales si es necesario

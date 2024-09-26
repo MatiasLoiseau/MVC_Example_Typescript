@@ -19,7 +19,7 @@ exports.CursoEstudiante = CursoEstudiante;
 __decorate([
     (0, typeorm_1.PrimaryColumn)(),
     __metadata("design:type", Number)
-], CursoEstudiante.prototype, "profesor_id", void 0);
+], CursoEstudiante.prototype, "estudiante_id", void 0);
 __decorate([
     (0, typeorm_1.PrimaryColumn)(),
     __metadata("design:type", Number)
@@ -29,7 +29,7 @@ __decorate([
     __metadata("design:type", Number)
 ], CursoEstudiante.prototype, "nota", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: Date, default: () => 'CURRENT_DATE' }),
+    (0, typeorm_1.Column)({ type: 'date', default: () => 'CURRENT_DATE' }),
     __metadata("design:type", Date)
 ], CursoEstudiante.prototype, "fecha", void 0);
 __decorate([

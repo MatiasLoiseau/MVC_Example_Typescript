@@ -10,6 +10,7 @@ const path_1 = __importDefault(require("path"));
 const estudianteRouter_1 = __importDefault(require("./routes/estudianteRouter"));
 const profesorRoutes_1 = __importDefault(require("./routes/profesorRoutes"));
 const cursosRouter_1 = __importDefault(require("./routes/cursosRouter"));
+const cursoEstudianteRouter_1 = __importDefault(require("./routes/cursoEstudianteRouter"));
 const method_override_1 = __importDefault(require("method-override"));
 const app = (0, express_1.default)();
 // Habilitamos Pug
@@ -33,4 +34,6 @@ app.use('/estudiantes', estudianteRouter_1.default);
 app.use('/profesores', profesorRoutes_1.default);
 // Rutas de cursos
 app.use('/cursos', cursosRouter_1.default);
+// Rutas de cursoestudiante
+app.use('/cursoestudiante', cursoEstudianteRouter_1.default);
 exports.default = app;
