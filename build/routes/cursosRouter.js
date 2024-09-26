@@ -19,11 +19,21 @@ const conexion_1 = require("../db/conexion");
 const router = express_1.default.Router();
 router.get('/listarCursos', cursoController_1.consultarTodos);
 // Insertar
-router.get('/crearCursos', (req, res) => {
-    res.render('crearCursos', {
-        pagina: 'Crear Curso',
-    });
-});
+router.get('/crearCursos', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const profesorRepository = conexion_1.AppDataSource.getRepository(ProfesorModel_1.Profesor);
+        const profesores = yield profesorRepository.find();
+        res.render('crearCursos', {
+            pagina: 'Crear Curso',
+            profesores
+        });
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            res.status(500).send(err.message);
+        }
+    }
+}));
 router.post('/', (0, cursoController_1.validar)(), cursoController_1.insertar);
 router.get('/modificarCurso/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

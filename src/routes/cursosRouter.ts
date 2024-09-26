@@ -8,11 +8,22 @@ const router = express.Router();
 router.get('/listarCursos', consultarTodos);
 
 // Insertar
-router.get('/crearCursos', (req, res) => {
-    res.render('crearCursos', {
-        pagina: 'Crear Curso',
-    });
+router.get('/crearCursos', async (req, res) => {
+    try {
+        const profesorRepository = AppDataSource.getRepository(Profesor);
+        const profesores = await profesorRepository.find();
+
+        res.render('crearCursos', {
+            pagina: 'Crear Curso',
+            profesores
+        });
+    } catch (err) {
+        if (err instanceof Error) {
+            res.status(500).send(err.message);
+        }
+    }
 });
+
 router.post('/', validar(), insertar);
 
 router.get('/modificarCurso/:id', async (req, res) => {

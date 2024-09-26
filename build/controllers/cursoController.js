@@ -24,16 +24,29 @@ const validar = () => [
     (0, express_validator_1.check)('profesor_id')
         .notEmpty().withMessage('El ID del profesor es obligatorio')
         .isNumeric().withMessage('El ID del profesor debe ser numérico'),
-    (req, res, next) => {
+    (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const errores = (0, express_validator_1.validationResult)(req);
         if (!errores.isEmpty()) {
-            return res.render('crearCursos', {
-                pagina: 'Crear Curso',
-                errores: errores.array()
-            });
+            try {
+                const profesorRepository = conexion_1.AppDataSource.getRepository(ProfesorModel_1.Profesor);
+                const profesores = yield profesorRepository.find();
+                return res.render('crearCursos', {
+                    pagina: 'Crear Curso',
+                    errores: errores.array(),
+                    profesores,
+                    curso: req.body // Para mantener los datos ingresados
+                });
+            }
+            catch (err) {
+                if (err instanceof Error) {
+                    res.status(500).send(err.message);
+                }
+            }
         }
-        next();
-    }
+        else {
+            next();
+        }
+    })
 ];
 exports.validar = validar;
 const consultarTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -81,13 +94,25 @@ exports.consultarUno = consultarUno;
 const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errores = (0, express_validator_1.validationResult)(req);
     if (!errores.isEmpty()) {
-        return res.render('crearCursos', {
-            pagina: 'Crear Curso',
-            errores: errores.array()
-        });
+        try {
+            const profesorRepository = conexion_1.AppDataSource.getRepository(ProfesorModel_1.Profesor);
+            const profesores = yield profesorRepository.find();
+            return res.render('crearCursos', {
+                pagina: 'Crear Curso',
+                errores: errores.array(),
+                profesores,
+                curso: req.body // Para mantener los datos ingresados
+            });
+        }
+        catch (err) {
+            if (err instanceof Error) {
+                res.status(500).send(err.message);
+            }
+        }
     }
     const { nombre, descripcion, profesor_id } = req.body;
     try {
+        // Tu código existente para insertar el curso
         yield conexion_1.AppDataSource.transaction((transactionalEntityManager) => __awaiter(void 0, void 0, void 0, function* () {
             const cursoRepository = transactionalEntityManager.getRepository(CursoModel_1.Curso);
             const profesorRepository = transactionalEntityManager.getRepository(ProfesorModel_1.Profesor);
@@ -98,15 +123,20 @@ const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const nuevoCurso = cursoRepository.create({ nombre, descripcion, profesor });
             yield cursoRepository.save(nuevoCurso);
         }));
-        const cursos = yield conexion_1.AppDataSource.getRepository(CursoModel_1.Curso).find({ relations: ['profesor'] });
-        res.render('listarCursos', {
-            pagina: 'Lista de Cursos',
-            cursos
-        });
+        res.redirect('/cursos/listarCursos');
     }
     catch (err) {
         if (err instanceof Error) {
-            res.status(500).send(err.message);
+            console.error('Error al insertar el curso:', err);
+            // En caso de error, renderizamos la vista con el mensaje de error
+            const profesorRepository = conexion_1.AppDataSource.getRepository(ProfesorModel_1.Profesor);
+            const profesores = yield profesorRepository.find();
+            res.render('crearCursos', {
+                pagina: 'Crear Curso',
+                errores: [{ msg: err.message }],
+                profesores,
+                curso: req.body
+            });
         }
     }
 });

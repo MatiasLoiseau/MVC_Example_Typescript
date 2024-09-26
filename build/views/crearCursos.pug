@@ -17,11 +17,19 @@ block contenido
                     
                     div
                         label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="nombre") Nombre del Curso
-                        input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Nombre del Curso" type="text" name="nombre" value=curso? curso.nombre : '')
+                        input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(
+                            placeholder="Nombre del Curso" 
+                            type="text" 
+                            name="nombre" 
+                            value=curso ? curso.nombre : ''
+                        )
                     
                     div
                         label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="descripcion") Descripción
-                        textarea#descripcion.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Descripción del Curso" name="descripcion")= curso? curso.descripcion : ''
+                        textarea#descripcion.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(
+                            placeholder="Descripción del Curso" 
+                            name="descripcion"
+                        )= curso ? curso.descripcion : ''
                     
                     div
                         label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="profesor_id") Profesor
@@ -30,7 +38,11 @@ block contenido
                             each profesor in profesores
                                 option(
                                     value=profesor.id,
-                                    selected=curso && curso.profesor && curso.profesor.id == profesor.id ? true : false
+                                    selected=curso && curso.profesor_id == profesor.id ? true : false
                                 )= profesor.nombre + ' ' + profesor.apellido
                         
-                    input(class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 cursor-pointer" type="submit" value="Registrar Curso")
+                    input(
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 cursor-pointer" 
+                        type="submit" 
+                        value="Registrar Curso"
+                    )
